@@ -68,12 +68,18 @@ input, button, select, textarea {
     font-family: 'Cairo', sans-serif;
 }
 
-/* تصميم شريط التمرير (السكرول) بنعومة */
+/* تصميم شريط التمرير بنعومة */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 body.dark-mode ::-webkit-scrollbar-thumb { background: #334155; }
 body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* ================= حماية أيقونات SVG من التضخم ================= */
+svg {
+    flex-shrink: 0; /* يمنع الأيقونة من الانفجار بداخل الـ flexbox */
+    max-width: 100%;
+}
 
 /* ================= الشريط العلوي ================= */
 .header-bar { 
@@ -142,9 +148,11 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #475569; }
 .search-icon { 
     position: absolute; 
     right: 14px; 
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--app-text-muted); 
-    width: 18px; 
-    height: 18px; 
+    width: 18px !important; 
+    height: 18px !important; 
     pointer-events: none;
 }
 
@@ -177,7 +185,11 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #475569; }
     box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3);
 }
 
-.telegram-header-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.telegram-header-btn svg { 
+    width: 18px !important; 
+    height: 18px !important; 
+    fill: currentColor; 
+}
 
 .icon-btn { 
     background: var(--app-surface); 
@@ -195,7 +207,11 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #475569; }
     text-decoration: none; 
 }
 
-.icon-btn svg { width: 22px; height: 22px; stroke-width: 2; }
+.icon-btn svg { 
+    width: 22px !important; 
+    height: 22px !important; 
+    stroke-width: 2; 
+}
 
 .icon-btn:hover { 
     background: var(--app-primary-light); 
@@ -205,7 +221,7 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #475569; }
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* تأثير النبض لزر الطباعة/الـ PDF */
+/* تأثير النبض لزر الطباعة */
 @keyframes printPulse {
     0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
     70% { box-shadow: 0 0 0 8px rgba(79, 70, 229, 0); }
@@ -268,7 +284,11 @@ body.dark-mode .dropdown-content { box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
 
 .drop-item:last-child { margin-bottom: 0; }
 .drop-item:hover { background-color: var(--app-primary-light); color: var(--app-primary); transform: translateX(-4px);}
-.drop-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+.drop-item svg { 
+    width: 18px !important; 
+    height: 18px !important; 
+    flex-shrink: 0; 
+}
 
 /* ================= مساحة العمل والمعاينة ================= */
 .workspace { 
@@ -596,7 +616,7 @@ body.dark-mode .theme-card.active { border-color: #fff; }
 }
 .tpl-card:hover { border-color: var(--app-primary); background: var(--app-primary-light); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05);}
 
-/* ================= شريط الموبايل السفلي ================= */
+/* ================= شريط الموبايل السفلي والـ Zoom الذكي ================= */
 .mobile-nav { 
     display: none; background: var(--app-surface); border-top: 1px solid var(--app-border); 
     padding: 10px 0; justify-content: space-around; z-index: 50; 
@@ -609,21 +629,47 @@ body.dark-mode .theme-card.active { border-color: #fff; }
 }
 .m-nav-btn.active { color: var(--app-primary); transform: translateY(-2px); }
 
+/* توافقية الموبايل (إصلاح تضخم الأيقونات والشريط العلوي) */
 @media (max-width: 900px) {
-    .header-bar { padding: 10px 15px; }
-    .search-box { max-width: 100%; width: 100%; order: 3; margin-top: 10px; }
-    .header-actions { flex: 1; justify-content: flex-end; }
-    .logo-area { flex: 1; }
+    .header-bar { 
+        padding: 10px 15px; 
+        flex-direction: column; /* تحويل الشريط إلى عمودي بالموبايل */
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    /* ترتيب اللوجو والأزرار في صف واحد بالترتيب الجديد */
+    .header-top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    /* لأننا غيرنا الـ HTML، سنطبق التنسيق بناءً على العناصر الموجودة */
+    .logo-area { flex: 1 1 auto; }
+    .header-actions { flex: 1 1 auto; justify-content: flex-end; }
+    
+    .search-box { 
+        width: 100%; 
+        max-width: none; 
+        order: 3; /* جعل البحث في الأسفل */
+        margin-top: 5px; 
+    }
+    
+    /* تعديل القائمة المنسدلة بالموبايل لئلا تخرج من الشاشة */
+    .dropdown-content {
+        left: auto;
+        right: 0;
+    }
     
     .workspace { display: block; overflow-y: hidden; }
     .control-panel { height: 100%; width: 100%; border: none; overflow-y: auto; padding-bottom: 80px;}
-    
     .preview-area { height: 100%; padding: 15px 5px 80px 5px; overflow-y: auto; overflow-x: auto; gap: 20px;}
     .mobile-nav { display: flex; position: absolute; bottom: 0; width: 100%; }
     
     body.show-controls .preview-area { display: none !important; }
     body.show-controls .control-panel { display: flex !important; }
-    
     body:not(.show-controls) .control-panel { display: none !important; }
     body:not(.show-controls) .preview-area { display: flex !important; }
     
