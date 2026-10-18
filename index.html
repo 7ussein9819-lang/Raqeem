@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رَقِيم Pro - منصة الأرشفة المباشرة</title>
+    
+    <!-- مكتبة قراءة وتصدير ملفات الإكسل الأصلية (.xlsx) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- مكتبة بناء وتصدير ملفات الوورد الأصلية (.docx) -->
+    <script src="https://unpkg.com/docx@7.3.0/build/index.js"></script>
+
+    <!-- مجموعة الخطوط العربية الاحترافية الكاملة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@400;700&family=Almarai:wght@400;700;800&family=Changa:wght@400;600;700&family=Amiri:wght@400;700&family=Readex+Pro:wght@400;600;700&family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- ربط ملف الستايل (CSS) -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- هذا الستايل مدمج هنا لأننا نتحكم به برمجياً لتغيير حجم الورقة بالطباعة -->
+    <style id="printStyle">
+        @media print { 
+            @page { size: A4 portrait; margin: 0; } 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 💬 نافذة الترحيب (تظهر للمستخدم الجديد فقط وتدعم الدعم المادي) -->
+    <div class="welcome-modal-overlay" id="welcomeModal">
+        <div class="welcome-modal">
+            <div class="welcome-icon">👋</div>
+            <h2 class="welcome-title">أهلاً بك في رَقِيم Pro</h2>
+            <p class="welcome-text">المنصة الأسرع والأسهل لأرشفة البيانات، إنشاء السجلات الاحترافية، وتصديرها بضغطة زر واحدة مجاناً (إلى PDF، Word، و Excel) دون الحاجة لإنترنت أو تسجيل دخول.</p>
+            
+            <div class="support-box">
+                <p>للمقترحات، الدعم الفني، أو الدعم المادي لديمومة المنصة:</p>
+                <a href="https://t.me/HJS_98" target="_blank" class="telegram-link">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.98 1.25-5.58 3.69-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.89.03-.25.38-.51 1.03-.78 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.88 5.17-1.89.11 0 .37.03.54.17.14.12.18.28.2.42.01.12.02.26.01.31z"/></svg>
+                    تواصل معي @HJS_98
+                </a>
+            </div>
+            
+            <button class="start-btn" onclick="closeWelcomeModal()">ابدأ العمل الآن 🚀</button>
+        </div>
+    </div>
+
+    <!-- الشريط العلوي -->
+    <header class="header-bar">
+        <div class="logo-area">رَقِيم <span class="pro-badge">Pro ✨</span></div>
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="searchInput" class="search-input" placeholder="ابحث في الأسماء والبيانات..." onkeyup="executeSearch()">
+        </div>
+        <div class="header-actions">
+            
+            <!-- ✈️ زر التلكرام الثابت في الأعلى مع المعرف الخاص بك -->
+            <a href="https://t.me/HJS_98" target="_blank" class="telegram-header-btn" title="التواصل والدعم الفني">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.98 1.25-5.58 3.69-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.89.03-.25.38-.51 1.03-.78 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.88 5.17-1.89.11 0 .37.03.54.17.14.12.18.28.2.42.01.12.02.26.01.31z"/></svg>
+                <span dir="ltr">@HJS_98</span>
+            </a>
+            
+            <button class="icon-btn" id="btnTheme" onclick="toggleDarkMode()" title="تغيير المظهر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+            <button class="icon-btn" id="btnLock" onclick="toggleDataLock()" title="قفل السجل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></button>
+            <div class="dropdown">
+                <button class="icon-btn menu" onclick="toggleExportMenu()" id="menuBtn" title="خيارات التصدير"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg></button>
+                <div class="dropdown-content" id="exportDropdown">
+                    <button class="drop-item" onclick="exportToExcelFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> تصدير إلى Excel (.xlsx)</button>
+                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير إلى Word (.docx)</button>
+                    <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
+                    <button class="drop-item" onclick="downloadJsonBackup()"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> حفظ نسخة احتياطية</button>
+                    <button class="drop-item" onclick="document.getElementById('uploadBackupInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> رفع نسخة محفوظة</button>
+                    <input type="file" id="uploadBackupInput" style="display:none;" accept=".json" onchange="processUploadedBackup(event)">
+                </div>
+            </div>
+            <button class="icon-btn lock-hide" onclick="clearAllSystemData()" title="تصفير السجل ومسح البيانات"><svg viewBox="0 0 24 24" fill="none" stroke="#e11d48"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+            <button class="icon-btn print-btn" onclick="executePrint()" title="طباعة أو حفظ كـ PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
+        </div>
+    </header>
+
+    <!-- منطقة العمل -->
+    <div class="workspace">
+        
+        <!-- منطقة الأوراق والمحرر المباشر -->
+        <main class="preview-area" id="previewAreaContainer">
+            <div style="color:var(--app-text-muted); font-weight:bold; font-size:1.1rem; padding: 20px;">
+                جاري تهيئة الأوراق...
+            </div>
+        </main>
+
+        <!-- لوحة التحكم السفلية -->
+        <aside class="control-panel" id="controlPanelArea">
+            <div class="tabs-nav">
+                <button class="tab-btn active" onclick="switchControlTab('tab1', this)">📝 البيانات السريعة</button>
+                <button class="tab-btn" onclick="switchControlTab('tab3', this)">🎨 تنسيق الجدول</button>
+                <button class="tab-btn" onclick="switchControlTab('tab2', this)">📄 الترويسة والتواقيع</button>
+                <button class="tab-btn" onclick="switchControlTab('tab4', this)">⚙️ أبعاد الورقة</button>
+                <button class="tab-btn" onclick="switchControlTab('tab5', this)">📂 قوالب جاهزة</button>
+            </div>
+
+            <!-- Tab 1: التحكم بالبيانات -->
+            <div id="tab1" class="tab-content active">
+                <div style="text-align: center; margin-bottom: 15px; background: var(--app-primary-light); padding: 10px; border-radius: 10px;">
+                    <p style="font-size:0.95rem; font-weight:bold; color:var(--app-primary);">✨ تعديل البيانات يتم مباشرة على الورقة (في الأعلى).</p>
+                </div>
+                
+                <div class="icon-toolbar lock-hide" style="margin-bottom: 15px;">
+                    <div class="toolbar-grid" style="margin-bottom: 10px;">
+                        <button class="tool-btn" onclick="performUndo()">↩️ تراجع</button>
+                        <button class="tool-btn" onclick="performRedo()">↪️ تقدم</button>
+                        <button class="tool-btn" onclick="moveActiveRowBy(-1)">🔼 صعد الصف</button>
+                        <button class="tool-btn" onclick="moveActiveRowBy(1)">🔽 نزل الصف</button>
+                        <button class="tool-btn" onclick="addNewColumnToTable()">➕ عمود جديد</button>
+                        <button class="tool-btn" onclick="deleteActiveColumn()">➖ حذف عمود</button>
+                        <button class="tool-btn" onclick="addNewRowToTable()">➕ صف جديد</button>
+                        <button class="tool-btn" onclick="deleteActiveRow()">➖ حذف صف</button>
+                    </div>
+                    
+                    <div class="flex-box">
+                        <input type="file" id="excelImportInput" accept=".xlsx, .xls" style="display:none" onchange="processExcelImport(event)">
+                        <button class="tool-btn" onclick="document.getElementById('excelImportInput').click()" style="background:var(--app-primary-light); color:var(--app-primary); border-color:var(--app-primary);">📥 استيراد إكسل</button>
+                        <button class="tool-btn" onclick="pasteDataFromExcel()">📋 لصق إكسل</button>
+                        <button class="tool-btn" onclick="calculateAutomaticSum()" style="background:#dcfce7; color:#059669; border-color:#10b981;">🧮 استخراج المجموع</button>
+                    </div>
+                </div>
+
+                <div class="lock-hide" style="border-top: 2px dashed var(--app-border); padding-top: 15px;">
+                    <h4 style="font-size: 0.95rem; margin-bottom: 10px; color: var(--app-primary); font-family: 'Reem Kufi', sans-serif;">🎨 تمييز الخلية المحددة (انقر على أي مربع في الورقة ولونه)</h4>
+                    <div class="flex-box">
+                        <button class="tool-btn" style="background:#dcfce7; color:#059669; border-color:#10b981;" onclick="setHighlightColorForActiveCell('#dcfce7', '#059669')">🟢 أخضر</button>
+                        <button class="tool-btn" style="background:#fee2e2; color:#e11d48; border-color:#f43f5e;" onclick="setHighlightColorForActiveCell('#fee2e2', '#e11d48')">🔴 أحمر</button>
+                        <button class="tool-btn" style="background:#fef9c3; color:#ca8a04; border-color:#facc15;" onclick="setHighlightColorForActiveCell('#fef9c3', '#ca8a04')">🟡 أصفر</button>
+                        <button class="tool-btn" style="background:#e0f2fe; color:#0369a1; border-color:#38bdf8;" onclick="setHighlightColorForActiveCell('#e0f2fe', '#0369a1')">🔵 أزرق</button>
+                        <button class="tool-btn" onclick="setHighlightColorForActiveCell('', '')">⚪ مسح</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: الجدول والتنسيق -->
+            <div id="tab3" class="tab-content">
+                <h3 class="section-title">عرض الأعمدة اليدوي</h3>
+                <div id="columnSlidersContainer"></div>
+                
+                <label class="check-box" style="margin-bottom: 20px;">
+                    <input type="checkbox" id="checkConditionalFormat" onchange="renderPaperPages()"> 
+                    <span>تلوين درجات الرسوب (أحمر) والغياب (أصفر) تلقائياً</span>
+                </label>
+
+                <h3 class="section-title">الأبعاد والمحاذاة</h3>
+                <div class="stepper">
+                    <span class="step-label">المسافة الداخلية للخلايا</span>
+                    <div class="step-actions">
+                        <span id="labelPadding" class="step-val">8px</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="changeNumberSetting('pad', 1)">▲</button>
+                            <button class="step-btn" onclick="changeNumberSetting('pad', -1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="stepper">
+                    <span class="step-label">ارتفاع الصفوف</span>
+                    <div class="step-actions">
+                        <span id="labelRowHeight" class="step-val">12mm</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="changeNumberSetting('row', 1)">▲</button>
+                            <button class="step-btn" onclick="changeNumberSetting('row', -1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-box" style="margin-bottom: 15px;">
+                    <button class="tool-btn" id="btnAlignRight" onclick="setTableAlignment('right')">يمين ➡️</button>
+                    <button class="tool-btn active" id="btnAlignCenter" onclick="setTableAlignment('center')">وسط ↔️</button>
+                    <button class="tool-btn" id="btnAlignLeft" onclick="setTableAlignment('left')">يسار ⬅️</button>
+                </div>
+                <div class="flex-box" style="margin-bottom: 20px;">
+                    <input type="color" class="control" id="inputBorderColor" value="#000000" onchange="setGlobalCssVariable('--tbl-border-c', this.value); renderPaperPages();">
+                    <select class="control" id="inputBorderWidth" onchange="setGlobalCssVariable('--tbl-border-w', this.value); renderPaperPages();">
+                        <option value="0px">بدون إطار</option>
+                        <option value="1px" selected>إطار رفيع</option>
+                        <option value="2px">إطار متوسط</option>
+                        <option value="3px">إطار سميك</option>
+                    </select>
+                </div>
+                
+                <h3 class="section-title">الخطوط والألوان</h3>
+                <div class="flex-box" style="margin-bottom:15px;">
+                    <select class="control" id="inputThFontFamily" onchange="setGlobalCssVariable('--th-font', `'${this.value}', sans-serif`); renderPaperPages();">
+                        <option value="Cairo">عناوين: كايرو</option>
+                        <option value="Tajawal">عناوين: تجوال</option>
+                        <option value="Almarai">عناوين: المراعي</option>
+                        <option value="Changa">عناوين: تشانجا</option>
+                        <option value="Amiri">عناوين: أميري</option>
+                        <option value="Readex Pro">عناوين: ريدكس</option>
+                        <option value="Rubik">عناوين: روبيك</option>
+                    </select>
+                    <select class="control" id="inputTdFontFamily" onchange="setGlobalCssVariable('--td-font', `'${this.value}', sans-serif`); renderPaperPages();">
+                        <option value="Tajawal" selected>نصوص: تجوال</option>
+                        <option value="Cairo">نصوص: كايرو</option>
+                        <option value="Almarai">نصوص: المراعي</option>
+                        <option value="Changa">نصوص: تشانجا</option>
+                        <option value="Amiri">نصوص: أميري</option>
+                        <option value="Readex Pro">نصوص: ريدكس</option>
+                        <option value="Rubik">نصوص: روبيك</option>
+                    </select>
+                </div>
+                <div class="flex-box" style="margin-bottom:20px;">
+                    <select class="control" id="inputThFontSize" onchange="setGlobalCssVariable('--th-size', this.value+'pt'); renderPaperPages();">
+                        <option value="12">عناوين 12</option>
+                        <option value="14" selected>عناوين 14</option>
+                        <option value="16">عناوين 16</option>
+                    </select>
+                    <select class="control" id="inputTdFontSize" onchange="setGlobalCssVariable('--td-size', this.value+'pt'); renderPaperPages();">
+                        <option value="10">نصوص 10</option>
+                        <option value="12" selected>نصوص 12</option>
+                        <option value="14">نصوص 14</option>
+                    </select>
+                </div>
+                
+                <h3 class="section-title">قوالب الألوان الاحترافية</h3>
+                <div class="themes-grid" id="themesContainerDiv"></div>
+                <label class="check-box"><input type="checkbox" id="checkStripedRows" checked onchange="renderPaperPages()"> تفعيل التظليل المتناوب للصفوف</label>
+            </div>
+
+            <!-- Tab 2: الترويسة -->
+            <div id="tab2" class="tab-content">
+                <h3 class="section-title">الترويسة العلوية</h3>
+                <div class="form-row">
+                    <input type="text" class="control" id="inputMainTitle" value="سجل بيانات الموظفين" placeholder="العنوان الرئيسي" oninput="updateMemoryValue('title')">
+                </div>
+                <div class="flex-box" style="margin-bottom:15px;">
+                    <input type="text" class="control" id="inputDirectorate" value="تربية الرصافة الثالثة" placeholder="المديرية" oninput="updateMemoryValue('dir')">
+                    <input type="text" class="control" id="inputSchoolName" value="مدرسة النور" placeholder="المدرسة" oninput="updateMemoryValue('school')">
+                </div>
+                <div class="flex-box" style="margin-bottom:20px;">
+                    <input type="text" class="control" id="inputDocumentNumber" placeholder="العدد" oninput="updateMemoryValue('num')">
+                    <input type="text" class="control" id="inputDocumentDate" placeholder="التاريخ" oninput="updateMemoryValue('date')">
+                </div>
+                <div class="form-row">
+                    <label>شعار المدرسة</label>
+                    <input type="file" class="control" id="inputLogoUpload" accept="image/*">
+                    <label class="check-box" style="margin-top:10px;"><input type="checkbox" id="checkShowWatermark" onchange="renderPaperPages()"> الشعار كعلامة مائية</label>
+                </div>
+                
+                <h3 class="section-title">التواقيع السفلية</h3>
+                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
+                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature1" onchange="renderPaperPages()"> الأول</label>
+                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle1" value="أعده" oninput="updateMemoryValue('s1')"><input type="text" class="control" id="inputSigName1" value="المنظم" oninput="updateMemoryValue('s1n')"></div>
+                </div>
+                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
+                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature2" onchange="renderPaperPages()"> الثاني</label>
+                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle2" value="راجعه" oninput="updateMemoryValue('s2')"><input type="text" class="control" id="inputSigName2" value="المدقق" oninput="updateMemoryValue('s2n')"></div>
+                </div>
+                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
+                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature3" onchange="renderPaperPages()"> الثالث</label>
+                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle3" value="اعتمده" oninput="updateMemoryValue('s3')"><input type="text" class="control" id="inputSigName3" value="المدير" oninput="updateMemoryValue('s3n')"></div>
+                </div>
+            </div>
+
+            <!-- Tab 4: الورقة -->
+            <div id="tab4" class="tab-content">
+                <h3 class="section-title">إعدادات الورقة</h3>
+                <div class="flex-box" style="margin-bottom: 15px;">
+                    <select class="control" id="inputPaperSize" onchange="updatePaperPrintSettings()">
+                        <option value="a4">حجم A4</option>
+                        <option value="a3">حجم A3</option>
+                    </select>
+                    <select class="control" id="inputPaperOrientation" onchange="updatePaperPrintSettings()">
+                        <option value="portrait">طولية</option>
+                        <option value="landscape">عرضية</option>
+                    </select>
+                </div>
+                
+                <div class="stepper">
+                    <span class="step-label">الهوامش الخارجية</span>
+                    <div class="step-actions">
+                        <span id="labelMarginValue" class="step-val">15mm</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="changeNumberSetting('marg', 1)">▲</button>
+                            <button class="step-btn" onclick="changeNumberSetting('marg', -1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stepper" style="background: var(--app-primary-light); border-color: var(--app-primary);">
+                    <span class="step-label" style="color: var(--app-primary);">تعبئة الفراغ (إضافة صفوف)</span>
+                    <div class="step-actions">
+                        <span id="labelRowAdjustment" class="step-val">تلقائي</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="changeNumberSetting('adj', 1)">▲</button>
+                            <button class="step-btn" onclick="changeNumberSetting('adj', -1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <label>اللون الفاصل في الترويسة</label>
+                    <input type="color" class="control" style="height:40px; padding:2px;" value="#4f46e5" onchange="setGlobalCssVariable('--app-primary', this.value); renderPaperPages();">
+                </div>
+                
+                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
+                    <label class="check-box" style="border:none; padding:0; margin-bottom:10px;"><input type="checkbox" id="checkShowPageNumber" checked onchange="renderPaperPages()"> إظهار الترقيم أسفل الورقة</label>
+                    <select class="control" id="inputPageNumberLanguage" onchange="renderPaperPages()">
+                        <option value="ar">ترقيم بالعربية (١، ٢، ٣)</option>
+                        <option value="en">ترقيم بالإنجليزية (1, 2, 3)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tab 5: القوالب الـ 12 -->
+            <div id="tab5" class="tab-content">
+                <h3 class="section-title">قوالب الجداول الجاهزة</h3>
+                <div class="tpl-grid">
+                    <div class="tpl-card" onclick="loadReadyTemplate('attendance')"><div style="font-size:30px; margin-bottom:8px;">📅</div><b>سجل حضور</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('grades')"><div style="font-size:30px; margin-bottom:8px;">🎓</div><b>سجل درجات</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('employees')"><div style="font-size:30px; margin-bottom:8px;">👥</div><b>سجل موظفين</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('inventory')"><div style="font-size:30px; margin-bottom:8px;">📦</div><b>سجل مخزن</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('daily')"><div style="font-size:30px; margin-bottom:8px;">✍️</div><b>يومية</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('expenses')"><div style="font-size:30px; margin-bottom:8px;">💸</div><b>مصروفات</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('library')"><div style="font-size:30px; margin-bottom:8px;">📚</div><b>إعارة كتب</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('visits')"><div style="font-size:30px; margin-bottom:8px;">🤝</div><b>زيارات</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('tasks')"><div style="font-size:30px; margin-bottom:8px;">✅</div><b>مهام</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('clinic')"><div style="font-size:30px; margin-bottom:8px;">🩺</div><b>مراجعات</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('maintenance')"><div style="font-size:30px; margin-bottom:8px;">🛠️</div><b>صيانة</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('empty')"><div style="font-size:30px; margin-bottom:8px;">⬜</div><b>فارغ</b></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- شريط الموبايل السفلي -->
+    <nav class="mobile-nav">
+        <button class="m-nav-btn" id="btnMobilePreview" onclick="toggleMobileInterface('preview')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:24px; height:24px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
+            <span>الورقة والتعديل</span>
+        </button>
+        <button class="m-nav-btn active" id="btnMobileEdit" onclick="toggleMobileInterface('controls')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:24px; height:24px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span>لوحة الإعدادات</span>
+        </button>
+    </nav>
+
+    <!-- ربط ملف الجافاسكربت (JS) -->
+    <script src="script.js"></script>
+
+    <!-- Default Statcounter code for موقع ارشفة https://7ussein9819-lang.github.io/Hussein313/ -->
+    <script type="text/javascript">
+    var sc_project=13359977; 
+    var sc_invisible=0; 
+    var sc_security="72c6e58b"; 
+    var scJsHost = "https://";
+    document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+
+    "statcounter.com/counter/counter.js'></"+"script>");
+    </script>
+    <noscript><div class="statcounter"><a title="Web Analytics Made Easy -
+    Statcounter" href="https://statcounter.com/" target="_blank"><img
+    class="statcounter" src="https://c.statcounter.com/13359977/0/72c6e58b/0/"
+    alt="Web Analytics Made Easy - Statcounter"
+    referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+    <!-- End of Statcounter Code -->
+
+</body>
+</html>
