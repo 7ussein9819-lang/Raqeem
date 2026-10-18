@@ -349,11 +349,6 @@ function applyColorTheme(themeObject, clickedElement) {
     setGlobalCssVariable('--th-color', themeObject.thTextColor); 
     setGlobalCssVariable('--td-color', themeObject.tdTextColor);
     
-    let thPicker = document.getElementById('inputThColorPicker'); 
-    let tdPicker = document.getElementById('inputTdColorPicker');
-    if(thPicker) thPicker.value = themeObject.thTextColor !== '#ffffff' ? '#000000' : '#ffffff';
-    if(tdPicker) tdPicker.value = themeObject.tdTextColor !== '#ffffff' ? '#ffffff' : '#000000';
-    
     renderPaperPages();
 }
 
@@ -539,7 +534,6 @@ function exportToExcelFile() {
     }
 }
 
-// دالة التصدير الاحتياطية للوورد
 function exportToWordFallback(documentTitle) {
     let isLandscapeFallback = (globalPaperOrientationMode === 'landscape');
     let cssPageRule = isLandscapeFallback ? 
@@ -615,7 +609,6 @@ function exportToWordFile() {
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true
                     })],
-                    shading: { fill: "e0e7ff" },
                     margins: { top: 100, bottom: 100, left: 100, right: 100 }
                 });
             });
@@ -1271,7 +1264,7 @@ function renderPaperPages() {
             let sigN1Input = document.getElementById('inputSigName1'); let safeSigN1 = sigN1Input ? escapeDangerousHtml(sigN1Input.value) : '';
             let sigT2Input = document.getElementById('inputSigTitle2'); let safeSigT2 = sigT2Input ? escapeDangerousHtml(sigT2Input.value) : '';
             let sigN2Input = document.getElementById('inputSigName2'); let safeSigN2 = sigN2Input ? escapeDangerousHtml(sigN2Input.value) : '';
-            let sigT3Input = document.getElementById('inputSigTitle3'); let safeSigT3 = safeSigT3 = escapeDangerousHtml(sigT3Input.value) : '';
+            let sigT3Input = document.getElementById('inputSigTitle3'); let safeSigT3 = sigT3Input ? escapeDangerousHtml(sigT3Input.value) : '';
             let sigN3Input = document.getElementById('inputSigName3'); let safeSigN3 = sigN3Input ? escapeDangerousHtml(sigN3Input.value) : '';
 
             paperDivElement.innerHTML = `
