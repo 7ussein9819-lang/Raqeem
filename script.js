@@ -8,7 +8,7 @@ document.addEventListener('keydown', function(e) {
     if(e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
 });
 
-const LOCAL_STORAGE_KEY = 'raqeem_pro_v14_final_split'; 
+const LOCAL_STORAGE_KEY = 'raqeem_pro_v16_final'; 
 const MAXIMUM_ALLOWED_ROWS = 250; 
 
 let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"]; 
@@ -47,11 +47,11 @@ function closeWelcomeModal() {
         modal.classList.remove('show');
         setTimeout(() => { modal.style.display = 'none'; }, 300);
     }
-    localStorage.setItem('raqeem_welcome_msg_v14', 'true');
+    localStorage.setItem('raqeem_welcome_msg_v16', 'true');
 }
 
 function checkWelcomeModal() {
-    if(!localStorage.getItem('raqeem_welcome_msg_v14')) {
+    if(!localStorage.getItem('raqeem_welcome_msg_v16')) {
         let modal = document.getElementById('welcomeModal');
         if(modal) {
             modal.style.display = 'flex';
@@ -534,6 +534,7 @@ function exportToExcelFile() {
     }
 }
 
+// دالة التصدير الاحتياطية للوورد
 function exportToWordFallback(documentTitle) {
     let isLandscapeFallback = (globalPaperOrientationMode === 'landscape');
     let cssPageRule = isLandscapeFallback ? 
@@ -609,6 +610,7 @@ function exportToWordFile() {
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true
                     })],
+                    shading: { fill: "e0e7ff" },
                     margins: { top: 100, bottom: 100, left: 100, right: 100 }
                 });
             });
